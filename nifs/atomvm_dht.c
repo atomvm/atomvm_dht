@@ -24,6 +24,7 @@
 
 #include <context.h>
 #include <defaultatoms.h>
+#include <esp32_sys.h>
 #include <interop.h>
 #include <nifs.h>
 #include <port.h>
@@ -224,6 +225,11 @@ static const struct Nif dht_read_nif =
     .nif_ptr = nif_dht_read
 };
 
+void atomvm_dht_init(GlobalContext *global)
+{
+    // no-op
+}
+
 const struct Nif *atomvm_dht_get_nif(const char *nifname)
 {
     if (strcmp("dht:read/1", nifname) == 0) {
@@ -232,3 +238,8 @@ const struct Nif *atomvm_dht_get_nif(const char *nifname)
     }
     return NULL;
 }
+
+#include <sdkconfig.h>
+#ifdef CONFIG_AVM_DHT_ENABLE
+REGISTER_NIF_COLLECTION(atomvm_dht, atomvm_dht_init, atomvm_dht_get_nif)
+#endif

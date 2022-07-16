@@ -1,5 +1,5 @@
 %%
-%% Copyright (c) 2020 fred@dushin.net
+%% Copyright (c) dushin.net
 %% All rights reserved.
 %%
 %% Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,20 +14,9 @@
 %% See the License for the specific language governing permissions and
 %% limitations under the License.
 %%
--module(dht_example).
 
--export([start/0]).
-
-start() ->
-    {ok, DHT} = dht:start(#{pin => 21, device => dht_11}),
-    loop(DHT).
-
-loop(DHT) ->
-    case dht:take_reading(DHT) of
-        {ok, {{Temp, TempFractional}, {Hum, HumFractional}}} ->
-            io:format("Temperature: ~p.~pC  Humidity: ~p.~p%~n", [Temp, TempFractional, Hum, HumFractional]);
-        Error ->
-            io:format("Error taking reading: ~p~n", [Error])
-    end,
-    timer:sleep(5000),
-    loop(DHT).
+-ifdef(TRACE_ENABLED).
+-define(TRACE(Format, Args), io:format("~p [~p:~p/~p:~p] " ++  Format ++ "~n", [erlang:system_time(millisecond), ?MODULE, ?FUNCTION_NAME, ?FUNCTION_ARITY, ?LINE | Args])).
+-else.
+-define(TRACE(Format, Args), ok).
+-endif.

@@ -1,0 +1,9 @@
+menu "ATOMVM_DHT Configuration"
+
+config AVM_DHT_ENABLE
+	bool  "Enable AtomVM DHT driver"
+	default y
+	help
+		Use this parameter to enable or disable the AtomVM DHT driver.
+
+endmenu

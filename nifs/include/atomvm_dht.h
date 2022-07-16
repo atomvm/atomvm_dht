@@ -15,4 +15,13 @@
 // limitations under the License.
 //
 
+#ifndef __ATOMVM_DHT_H__
+#define __ATOMVM_DHT_H__
+
+#include <globalcontext.h>
+#include <nifs.h>
+
+void atomvm_dht_init(GlobalContext *global);
 const struct Nif *atomvm_dht_get_nif(const char *nifname);
+
+#endif
