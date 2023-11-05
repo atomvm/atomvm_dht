@@ -194,27 +194,27 @@ static term nif_dht_read(Context *ctx, int argc, term argv[])
     term pin = argv[0];
     VALIDATE_VALUE(pin, term_is_integer);
 
-    if (UNLIKELY(memory_ensure_free(ctx, 20) != MEMORY_GC_OK)) {
-        RAISE_ERROR(OUT_OF_MEMORY_ATOM);
-    }
-
     uint8_t buf[5];
     memset(buf, 0, 5);
     int err = read_into(term_to_int(pin), buf);
     if (err == PROTOCOL_ERROR) {
-        if (UNLIKELY(memory_ensure_free(ctx, 3) != MEMORY_GC_OK)) {
+        if (UNLIKELY(memory_ensure_free(ctx, TUPLE_SIZE(2)) != MEMORY_GC_OK)) {
             RAISE_ERROR(OUT_OF_MEMORY_ATOM);
         } else {
-            term error_tuple = term_alloc_tuple(2, ctx);
+            term error_tuple = term_alloc_tuple(2, &ctx->heap);
             term_put_tuple_element(error_tuple, 0, ERROR_ATOM);
-            term_put_tuple_element(error_tuple, 1, context_make_atom(ctx, dht_bad_read));
+            term_put_tuple_element(error_tuple, 1, globalcontext_make_atom(ctx->global, dht_bad_read));
             return error_tuple;
         }
     } else {
-        term ok_tuple = term_alloc_tuple(2, ctx);
-        term_put_tuple_element(ok_tuple, 0, OK_ATOM);
-        term_put_tuple_element(ok_tuple, 1, term_from_literal_binary(buf, 5, ctx));
-        return ok_tuple;
+        if (UNLIKELY(memory_ensure_free(ctx, TUPLE_SIZE(2) + term_binary_heap_size(5)) != MEMORY_GC_OK)) {
+            RAISE_ERROR(OUT_OF_MEMORY_ATOM);
+        } else {
+            term ok_tuple = term_alloc_tuple(2, &ctx->heap);
+            term_put_tuple_element(ok_tuple, 0, OK_ATOM);
+            term_put_tuple_element(ok_tuple, 1, term_from_literal_binary(buf, 5, &ctx->heap, ctx->global));
+            return ok_tuple;
+        }
     }
 }
 
@@ -241,5 +241,5 @@ const struct Nif *atomvm_dht_get_nif(const char *nifname)
 
 #include <sdkconfig.h>
 #ifdef CONFIG_AVM_DHT_ENABLE
-REGISTER_NIF_COLLECTION(atomvm_dht, atomvm_dht_init, atomvm_dht_get_nif)
+REGISTER_NIF_COLLECTION(atomvm_dht, atomvm_dht_init, NULL, atomvm_dht_get_nif)
 #endif
