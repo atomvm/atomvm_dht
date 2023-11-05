@@ -8,14 +8,14 @@ The `dht_example` program illustrates use of the DHT API by taking a temperature
 
 For this application, you will need:
 
-* An ESP32 device, flashed with the [AtomVM](https://github.com/bettio/AtomVM) image (including the VM and core libraries), and capable of connecting via UART to your development machine;
+* An ESP32 device, flashed with the [AtomVM](https://github.com/atomvm/AtomVM) image (including the VM and core libraries), containing the `atomvm_dht` Nif, and capable of connecting via UART to your development machine;
 * A DHT11 or DHT22 device, typically marketed as an integrated development board;
 * The [`esptool.py`](https://github.com/espressif/esptool) tool (for flashing);
 * The [`git`](https://git-scm.com) version control tool;
 * [Erlang/OTP 21](https://www.erlang.org) or higher, along with [`rebar3`](https://www.rebar3.org);
 * A serial monitor program of your choice (e.g, [`minicom`](https://en.wikipedia.org/wiki/Minicom))
 
-While the [IDF SDK](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/) and required toolchains are not required, they may make life a little easier.
+> Note that you will need to build a version of the AtomVM virtual machine that includes the `atomvm_dht` Nif.
 
 ## Getting Started
 
@@ -37,9 +37,9 @@ To run this example program, connect the positive (+) lead on the DHT device to 
 
 To build and flash this application to your ESP32 device, issue the `esp32_flash` target to the `rebar3` command, and optionally specify the device port and baud rate, if they do not match the defaults.
 
-> Note.  For information about the `esp32_flash` target, see the [`atomvm_rebar3_plugin`](https://github.com/atomvm/atomvm_rebar3_plugin) instructions.
+> Note.  For information about the `esp32_flash` target, see the [`atomvm_rebar3_plugin`](https://atomvm.github.io/atomvm_rebar3_plugin) instructions.
 
-    shell$ rebar3 esp32_flash -p /dev/ttyUSB0 -b 115200
+    shell$ rebar3 atomvm esp32_flash -p /dev/ttyUSB0 -b 115200
     ===> Fetching atomvm_rebar3_plugin
     ===> Fetching packbeam
     ===> Analyzing applications...
